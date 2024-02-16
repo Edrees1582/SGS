@@ -1,14 +1,10 @@
 package org.example.server;
 
-import org.example.Dao.MySQLCourseDao;
-import org.example.Dao.MySQLEnrollmentDao;
-import org.example.Dao.MySQLGradeDao;
-import org.example.Dao.MySQLUserDao;
-import org.example.models.Course;
-import org.example.models.Grade;
+import org.example.dao.MySQLCourseDao;
+import org.example.dao.MySQLEnrollmentDao;
+import org.example.dao.MySQLGradeDao;
+import org.example.dao.MySQLUserDao;
 import org.example.models.Student;
-import org.example.users.User;
-import org.example.users.UserType;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

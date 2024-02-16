@@ -1,8 +1,8 @@
 package org.example.server;
 
-import org.example.Dao.MySQLCourseDao;
-import org.example.Dao.MySQLEnrollmentDao;
-import org.example.Dao.MySQLUserDao;
+import org.example.dao.MySQLCourseDao;
+import org.example.dao.MySQLEnrollmentDao;
+import org.example.dao.MySQLUserDao;
 import org.example.models.Course;
 import org.example.models.Student;
 import org.example.users.User;

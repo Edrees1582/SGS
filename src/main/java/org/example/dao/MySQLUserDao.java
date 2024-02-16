@@ -1,4 +1,4 @@
-package org.example.Dao;
+package org.example.dao;
 
 import org.example.system_interfaces.AdminInterface;
 import org.example.system_interfaces.InstructorInterface;

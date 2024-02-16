@@ -1,4 +1,4 @@
-package org.example.Dao;
+package org.example.dao;
 
 import org.example.models.Course;
 
