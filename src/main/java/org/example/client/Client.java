@@ -15,7 +15,6 @@ public class Client {
 
             DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
-            ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
 
             Scanner scanner = new Scanner(System.in);
 
@@ -30,6 +29,8 @@ public class Client {
             System.out.print("Enter password: ");
             dataOutputStream.writeUTF(scanner.next());
             dataOutputStream.flush();
+
+            ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
 
             boolean isAuthenticated = dataInputStream.readBoolean();
 

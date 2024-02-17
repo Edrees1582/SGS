@@ -1,9 +1,6 @@
 package org.example.system_interfaces;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Scanner;
 
 public class AdminInterface implements UserInterface, Serializable {

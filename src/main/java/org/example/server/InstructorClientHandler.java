@@ -14,14 +14,10 @@ import java.util.List;
 
 public class InstructorClientHandler {
     private final Socket clientSocket;
-    private final MySQLUserDao mySQLUserDao;
-    private final MySQLCourseDao mySQLCourseDao;
     private final MySQLGradeDao mySQLGradeDao;
     private final MySQLEnrollmentDao mySQLEnrollmentDao;
     public InstructorClientHandler(Socket clientSocket) {
         this.clientSocket = clientSocket;
-        mySQLUserDao = new MySQLUserDao();
-        mySQLCourseDao = new MySQLCourseDao();
         mySQLGradeDao = new MySQLGradeDao();
         mySQLEnrollmentDao = new MySQLEnrollmentDao();
     }

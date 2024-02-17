@@ -2,9 +2,7 @@ package org.example.users;
 
 import org.example.system_interfaces.UserInterface;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.Serializable;
+import java.io.*;
 
 public class User implements Serializable {
     private final String id;

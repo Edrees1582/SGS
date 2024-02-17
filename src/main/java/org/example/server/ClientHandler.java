@@ -3,10 +3,7 @@ package org.example.server;
 import org.example.util.Authentication;
 import org.example.users.User;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
@@ -20,7 +17,6 @@ public class ClientHandler implements Runnable {
         try {
             DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 
             int chosenUserType = dataInputStream.readInt();
 
@@ -31,11 +27,13 @@ public class ClientHandler implements Runnable {
 
             User user = authentication.authenticateUser(chosenUserType, userId, userPassword);
 
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+
             if (user != null) {
                 dataOutputStream.writeBoolean(true);
                 System.out.println(user.getUserType() + ": " + user.getName() + " logged in");
                 objectOutputStream.writeObject(user);
-                objectOutputStream.flush();
+                dataOutputStream.flush();
             }
             else {
                 dataOutputStream.writeBoolean(false);
@@ -53,7 +51,8 @@ public class ClientHandler implements Runnable {
                     instructorClientHandler.runHandler();
                     break;
                 case 3:
-                    System.out.println("Student...");
+                    StudentClientHandler studentClientHandler = new StudentClientHandler(clientSocket);
+                    studentClientHandler.runHandler();
                     break;
                 default:
                     System.out.println("Invalid user type");
