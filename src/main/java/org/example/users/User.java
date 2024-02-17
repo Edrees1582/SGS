@@ -41,11 +41,8 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id='" + id + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", userType=" + userType +
-                '}';
+        return "+------------+----------------------+\n" +
+                String.format("| %-10s | %-20s |\n", "ID", "Name") +
+                "+------------+----------------------+\n";
     }
 }

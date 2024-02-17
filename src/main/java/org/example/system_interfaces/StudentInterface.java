@@ -31,15 +31,11 @@ public class StudentInterface implements UserInterface, Serializable {
                     case 1:
                         System.out.println("Enrolled courses list:");
                         dataOutputStream.writeUTF(studentId);
-                        dataOutputStream.flush();
-
-                        System.out.println("Student: " + dataInputStream.readUTF());
                         break;
                     case 2:
                         System.out.print("Enter course id: ");
                         dataOutputStream.writeUTF(scanner.next());
                         dataOutputStream.writeUTF(studentId);
-                        dataOutputStream.flush();
                         break;
                     case 3:
                         dataOutputStream.writeUTF(studentId);
@@ -49,8 +45,12 @@ public class StudentInterface implements UserInterface, Serializable {
                         System.out.println("Exiting...");
                         return;
                     default:
-                        System.out.println(("Invalid option"));
+                        System.out.println("Invalid option");
                 }
+
+                dataOutputStream.flush();
+
+                System.out.println(dataInputStream.readUTF());
             } while (option != 4);
         } catch (Exception e) {
             throw new RuntimeException(e);

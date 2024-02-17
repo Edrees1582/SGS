@@ -83,12 +83,12 @@ public class InstructorInterface implements UserInterface, Serializable {
                         System.out.println("Exiting...");
                         return;
                     default:
-                        System.out.println(("Invalid option"));
+                        System.out.println("Invalid option");
                 }
 
                 dataOutputStream.flush();
 
-                System.out.println("Client: " + dataInputStream.readUTF());
+                System.out.println(dataInputStream.readUTF());
             } while (option != 8);
         } catch (Exception e) {
             throw new RuntimeException(e);

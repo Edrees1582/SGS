@@ -7,6 +7,7 @@ import org.example.models.Course;
 import org.example.models.Student;
 import org.example.users.User;
 import org.example.users.UserType;
+import org.example.util.FormatData;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -19,11 +20,13 @@ public class AdminClientHandler {
     private final MySQLUserDao mySQLUserDao;
     private final MySQLCourseDao mySQLCourseDao;
     private final MySQLEnrollmentDao mySQLEnrollmentDao;
+    private final FormatData formatData;
     public AdminClientHandler(Socket clientSocket) {
         this.clientSocket = clientSocket;
         mySQLUserDao = new MySQLUserDao();
         mySQLCourseDao = new MySQLCourseDao();
         mySQLEnrollmentDao = new MySQLEnrollmentDao();
+        formatData = new FormatData();
     }
 
     public void runHandler() throws IOException {
@@ -49,7 +52,7 @@ public class AdminClientHandler {
                 case 3:
                     UserType usersType = choseUserType(dataInputStream.readInt());
                     List<User> fetchedUsers = mySQLUserDao.getAll(usersType);
-                    dataOutputStream.writeUTF(String.valueOf(fetchedUsers));
+                    dataOutputStream.writeUTF(formatData.formatUsers(fetchedUsers));
                     break;
                 case 4:
                     UserType updateUserType = choseUserType(dataInputStream.readInt());
@@ -74,7 +77,7 @@ public class AdminClientHandler {
                     dataOutputStream.writeUTF(String.valueOf(mySQLCourseDao.get(dataInputStream.readUTF())));
                     break;
                 case 8:
-                    dataOutputStream.writeUTF(String.valueOf(mySQLCourseDao.getAll()));
+                    dataOutputStream.writeUTF(formatData.formatCourses(mySQLCourseDao.getAll()));
                     break;
                 case 9:
                     String updateCourseId = dataInputStream.readUTF();
@@ -91,11 +94,11 @@ public class AdminClientHandler {
                     break;
                 case 11:
                     List<Course> fetchedCourses = mySQLEnrollmentDao.getStudentCourses(dataInputStream.readUTF());
-                    dataOutputStream.writeUTF(String.valueOf(fetchedCourses));
+                    dataOutputStream.writeUTF(formatData.formatCourses(fetchedCourses));
                     break;
                 case 12:
                     List<Student> fetchedStudents = mySQLEnrollmentDao.getCourseStudents(dataInputStream.readUTF());
-                    dataOutputStream.writeUTF(String.valueOf(fetchedStudents));
+                    dataOutputStream.writeUTF(formatData.formatStudents(fetchedStudents));
                     break;
                 default:
                     dataOutputStream.writeUTF("Invalid option");

@@ -6,6 +6,8 @@ import org.example.util.DBUtil;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MySQLGradeDao implements GradeDao {
     private final DBUtil dbUtil;
@@ -26,6 +28,22 @@ public class MySQLGradeDao implements GradeDao {
             if (resultSet.next()) return new Grade(courseId, studentId, resultSet.getString("grade"));
 
             return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Grade> getStudentGrades(String studentId) {
+        try (Connection connection = dbUtil.getDataSource().getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from grades where studentId = '" + studentId + "';");
+            List<Grade> grades = new ArrayList<>();
+
+            while (resultSet.next())
+                grades.add(new Grade(resultSet.getString("courseId"), resultSet.getString("studentId"), resultSet.getString("grade")));
+
+            return grades;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

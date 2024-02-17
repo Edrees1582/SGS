@@ -173,7 +173,7 @@ public class AdminInterface implements UserInterface, Serializable {
 
                 dataOutputStream.flush();
 
-                System.out.println("Client: " + dataInputStream.readUTF());
+                System.out.println(dataInputStream.readUTF());
             } while (option != 13);
         } catch (IOException e) {
             throw new RuntimeException(e);

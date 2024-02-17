@@ -5,6 +5,8 @@ import org.example.dao.MySQLEnrollmentDao;
 import org.example.dao.MySQLGradeDao;
 import org.example.dao.MySQLUserDao;
 import org.example.models.Student;
+import org.example.users.User;
+import org.example.util.FormatData;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -16,10 +18,12 @@ public class InstructorClientHandler {
     private final Socket clientSocket;
     private final MySQLGradeDao mySQLGradeDao;
     private final MySQLEnrollmentDao mySQLEnrollmentDao;
+    private final FormatData formatData;
     public InstructorClientHandler(Socket clientSocket) {
         this.clientSocket = clientSocket;
         mySQLGradeDao = new MySQLGradeDao();
         mySQLEnrollmentDao = new MySQLEnrollmentDao();
+        formatData = new FormatData();
     }
 
     public void runHandler() throws IOException {
@@ -44,7 +48,7 @@ public class InstructorClientHandler {
                 case 3:
                     String getCourseId = dataInputStream.readUTF();
                     List<Student> fetchedStudents = mySQLEnrollmentDao.getCourseStudents(getCourseId);
-                    dataOutputStream.writeUTF(String.valueOf(fetchedStudents));
+                    dataOutputStream.writeUTF(formatData.formatStudents(fetchedStudents));
                     break;
                 case 4:
                     mySQLGradeDao.save(dataInputStream);
