@@ -20,7 +20,8 @@ public class InstructorInterface implements UserInterface, Serializable {
                 System.out.println("5. View grade");
                 System.out.println("6. Update grade");
                 System.out.println("7. Delete grade");
-                System.out.println("8. Exit");
+                System.out.println("8. Course statistical data");
+                System.out.println("9. Exit");
 
                 System.out.print("Enter option: ");
                 option = scanner.nextInt();
@@ -51,7 +52,7 @@ public class InstructorInterface implements UserInterface, Serializable {
                         System.out.print("Enter student id: ");
                         dataOutputStream.writeUTF(scanner.next());
                         System.out.print("Enter grade: ");
-                        dataOutputStream.writeUTF(scanner.next());
+                        dataOutputStream.writeDouble(scanner.nextDouble());
                         break;
                     case 5:
                         System.out.print("Enter course id: ");
@@ -68,10 +69,10 @@ public class InstructorInterface implements UserInterface, Serializable {
                         dataOutputStream.flush();
 
                         System.out.println("Current grade: ");
-                        System.out.println(dataInputStream.readUTF());
+                        System.out.println(dataInputStream.readDouble());
 
                         System.out.print("Enter new grade: ");
-                        dataOutputStream.writeUTF(scanner.next());
+                        dataOutputStream.writeDouble(scanner.nextDouble());
                         break;
                     case 7:
                         System.out.print("Enter course id: ");
@@ -80,6 +81,10 @@ public class InstructorInterface implements UserInterface, Serializable {
                         dataOutputStream.writeUTF(scanner.next());
                         break;
                     case 8:
+                        System.out.print("Enter course id: ");
+                        dataOutputStream.writeUTF(scanner.next());
+                        break;
+                    case 9:
                         System.out.println("Exiting...");
                         return;
                     default:
@@ -89,7 +94,7 @@ public class InstructorInterface implements UserInterface, Serializable {
                 dataOutputStream.flush();
 
                 System.out.println(dataInputStream.readUTF());
-            } while (option != 8);
+            } while (option != 9);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

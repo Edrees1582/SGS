@@ -5,6 +5,7 @@ import org.example.dao.MySQLGradeDao;
 import org.example.models.Course;
 import org.example.models.Grade;
 import org.example.util.FormatData;
+import org.example.util.GradesStatistics;
 
 import java.io.*;
 import java.net.Socket;
@@ -15,11 +16,13 @@ public class StudentClientHandler {
     private final MySQLGradeDao mySQLGradeDao;
     private final MySQLEnrollmentDao mySQLEnrollmentDao;
     private final FormatData formatData;
+    private final GradesStatistics gradesStatistics;
     public StudentClientHandler(Socket clientSocket) {
         this.clientSocket = clientSocket;
         mySQLGradeDao = new MySQLGradeDao();
         mySQLEnrollmentDao = new MySQLEnrollmentDao();
         formatData = new FormatData();
+        gradesStatistics = new GradesStatistics();
     }
 
     public void runHandler() throws IOException {
@@ -46,11 +49,15 @@ public class StudentClientHandler {
                     List<Grade> fetchedGrades = mySQLGradeDao.getStudentGrades(viewGradesStudentId);
                     dataOutputStream.writeUTF(formatData.formatGrades(fetchedGrades));
                     break;
+                case 4:
+                    String statisticsStudentId = dataInputStream.readUTF();
+                    dataOutputStream.writeUTF(gradesStatistics.getStudentStatistics(statisticsStudentId));
+                    break;
                 default:
                     dataOutputStream.writeUTF("Invalid option");
             }
 
             dataOutputStream.flush();
-        } while (option != 4);
+        } while (option != 5);
     }
 }

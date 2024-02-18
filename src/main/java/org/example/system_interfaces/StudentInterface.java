@@ -19,7 +19,8 @@ public class StudentInterface implements UserInterface, Serializable {
                 System.out.println("1. View enrolled courses");
                 System.out.println("2. View course grade");
                 System.out.println("3. View grades");
-                System.out.println("4. Exit");
+                System.out.println("4. View grades statistics");
+                System.out.println("5. Exit");
 
                 System.out.print("Enter option: ");
                 option = scanner.nextInt();
@@ -42,6 +43,10 @@ public class StudentInterface implements UserInterface, Serializable {
                         dataOutputStream.flush();
                         break;
                     case 4:
+                        System.out.println("Grades statistics:");
+                        dataOutputStream.writeUTF(studentId);
+                        break;
+                    case 5:
                         System.out.println("Exiting...");
                         return;
                     default:
@@ -51,7 +56,7 @@ public class StudentInterface implements UserInterface, Serializable {
                 dataOutputStream.flush();
 
                 System.out.println(dataInputStream.readUTF());
-            } while (option != 4);
+            } while (option != 5);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

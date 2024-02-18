@@ -3,9 +3,9 @@ package org.example.models;
 public class Grade {
     private String courseId;
     private String studentId;
-    private String grade;
+    private double grade;
 
-    public Grade(String courseId, String studentId, String grade) {
+    public Grade(String courseId, String studentId, double grade) {
         this.courseId = courseId;
         this.studentId = studentId;
         this.grade = grade;
@@ -27,11 +27,11 @@ public class Grade {
         this.studentId = studentId;
     }
 
-    public String getGrade() {
+    public double getGrade() {
         return grade;
     }
 
-    public void setGrade(String grade) {
+    public void setGrade(double grade) {
         this.grade = grade;
     }
 

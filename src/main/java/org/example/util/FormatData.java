@@ -62,7 +62,7 @@ public class FormatData {
         result.append("+------------+------------+-------+\n");
 
         for (Grade grade : grades) {
-            result.append(String.format("| %-10s | %-10s | %-5s |\n", grade.getCourseId(), grade.getStudentId(), grade.getGrade()));
+            result.append(String.format("| %-10s | %-10s | %-5d |\n", grade.getCourseId(), grade.getStudentId(), grade.getGrade()));
         }
 
         result.append("+------------+------------+-------+\n");

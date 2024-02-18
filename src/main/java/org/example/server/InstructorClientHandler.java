@@ -7,6 +7,7 @@ import org.example.dao.MySQLUserDao;
 import org.example.models.Student;
 import org.example.users.User;
 import org.example.util.FormatData;
+import org.example.util.GradesStatistics;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -19,11 +20,13 @@ public class InstructorClientHandler {
     private final MySQLGradeDao mySQLGradeDao;
     private final MySQLEnrollmentDao mySQLEnrollmentDao;
     private final FormatData formatData;
+    private final GradesStatistics gradesStatistics;
     public InstructorClientHandler(Socket clientSocket) {
         this.clientSocket = clientSocket;
         mySQLGradeDao = new MySQLGradeDao();
         mySQLEnrollmentDao = new MySQLEnrollmentDao();
         formatData = new FormatData();
+        gradesStatistics = new GradesStatistics();
     }
 
     public void runHandler() throws IOException {
@@ -73,11 +76,14 @@ public class InstructorClientHandler {
                     mySQLGradeDao.delete(deleteGradeCourseId, deleteGradeStudentId);
                     dataOutputStream.writeUTF("Grade with course id: " + deleteGradeCourseId + ", and student id: " + deleteGradeStudentId + ", is deleted");
                     break;
+                case 8:
+                    String statsCourseId = dataInputStream.readUTF();
+                    dataOutputStream.writeUTF(gradesStatistics.getCourseStatistics(statsCourseId));
                 default:
                     dataOutputStream.writeUTF("Invalid option");
             }
 
             dataOutputStream.flush();
-        } while (option != 8);
+        } while (option != 9);
     }
 }

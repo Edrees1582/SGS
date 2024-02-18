@@ -25,7 +25,7 @@ public class MySQLGradeDao implements GradeDao {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("select * from grades where courseId = '" + courseId + "' and studentId = '" + studentId + "';");
 
-            if (resultSet.next()) return new Grade(courseId, studentId, resultSet.getString("grade"));
+            if (resultSet.next()) return new Grade(courseId, studentId, resultSet.getDouble("grade"));
 
             return null;
         } catch (SQLException e) {
@@ -41,7 +41,23 @@ public class MySQLGradeDao implements GradeDao {
             List<Grade> grades = new ArrayList<>();
 
             while (resultSet.next())
-                grades.add(new Grade(resultSet.getString("courseId"), resultSet.getString("studentId"), resultSet.getString("grade")));
+                grades.add(new Grade(resultSet.getString("courseId"), resultSet.getString("studentId"), resultSet.getDouble("grade")));
+
+            return grades;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Grade> getCourseGrades(String courseId) {
+        try (Connection connection = dbUtil.getDataSource().getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from grades where courseId = '" + courseId + "';");
+            List<Grade> grades = new ArrayList<>();
+
+            while (resultSet.next())
+                grades.add(new Grade(resultSet.getString("courseId"), resultSet.getString("studentId"), resultSet.getDouble("grade")));
 
             return grades;
         } catch (SQLException e) {
@@ -55,9 +71,10 @@ public class MySQLGradeDao implements GradeDao {
             String saveSql = "insert into grades values (?, ?, ?);";
 
             PreparedStatement preparedStatement = connection.prepareCall(saveSql);
-            for (int i = 1; i <= 3; i++) {
-                preparedStatement.setString(i, dataInputStream.readUTF());
-            }
+
+            preparedStatement.setString(1, dataInputStream.readUTF());
+            preparedStatement.setString(2, dataInputStream.readUTF());
+            preparedStatement.setDouble(3, dataInputStream.readDouble());
 
             preparedStatement.executeUpdate();
         } catch (SQLException | IOException e) {
@@ -71,7 +88,7 @@ public class MySQLGradeDao implements GradeDao {
             String updateSql = "update grades set grade = ? where courseId = ? and studentId = ?;";
 
             PreparedStatement updatePreparedStatement = connection.prepareCall(updateSql);
-            updatePreparedStatement.setString(1, dataInputStream.readUTF());
+            updatePreparedStatement.setDouble(1, dataInputStream.readDouble());
             updatePreparedStatement.setString(2, courseId);
             updatePreparedStatement.setString(3, studentId);
 
