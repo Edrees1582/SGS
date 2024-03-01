@@ -51,6 +51,22 @@ public class MySQLCourseDao implements CourseDao {
     }
 
     @Override
+    public List<Course> getAllByInstructorId(String instructorId) {
+        try (Connection connection = dbUtil.getDataSource().getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from courses where instructorId = " + instructorId + ";");
+            List<Course> courses = new ArrayList<>();
+
+            while (resultSet.next())
+                courses.add(new Course(resultSet.getString("id"), resultSet.getString("title"), instructorId));
+
+            return courses;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void save(DataInputStream dataInputStream, DataOutputStream dataOutputStream) {
         try (Connection connection = dbUtil.getDataSource().getConnection()) {
             String saveSql = "insert into courses values (?, ?, ?);";
@@ -95,6 +111,12 @@ public class MySQLCourseDao implements CourseDao {
 
             PreparedStatement deletePreparedStatement = connection.prepareCall(deleteSql);
             deletePreparedStatement.setString(1, id);
+
+            MySQLEnrollmentDao mySQLEnrollmentDao = new MySQLEnrollmentDao();
+            mySQLEnrollmentDao.deleteByCourse(id);
+
+            MySQLGradeDao mySQLGradeDao = new MySQLGradeDao();
+            mySQLGradeDao.deleteByCourse(id);
 
             deletePreparedStatement.executeUpdate();
         } catch (SQLException e) {

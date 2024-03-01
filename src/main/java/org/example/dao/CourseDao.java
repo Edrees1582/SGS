@@ -9,6 +9,7 @@ import java.util.List;
 public interface CourseDao {
     Course get(String id);
     List<Course> getAll();
+    List<Course> getAllByInstructorId(String instructorId);
     void save(DataInputStream dataInputStream, DataOutputStream dataOutputStream);
     void update(DataInputStream dataInputStream, DataOutputStream dataOutputStream, String id, int updateOption);
     void delete(String id);

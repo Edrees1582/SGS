@@ -1,5 +1,6 @@
 package org.example.dao;
 
+import org.example.models.Course;
 import org.example.system_interfaces.AdminInterface;
 import org.example.system_interfaces.InstructorInterface;
 import org.example.system_interfaces.StudentInterface;
@@ -134,6 +135,17 @@ public class MySQLUserDao implements UserDao<User> {
             
             PreparedStatement deletePreparedStatement = connection.prepareCall(deleteSql);
             deletePreparedStatement.setString(1, id);
+
+            if (userType == UserType.STUDENT) {
+                MySQLEnrollmentDao mySQLEnrollmentDao = new MySQLEnrollmentDao();
+                List<Course> courses = mySQLEnrollmentDao.getStudentCourses(id);
+                for (Course course : courses) mySQLEnrollmentDao.delete(course.getId(), id);
+            }
+            else if (userType == UserType.INSTRUCTOR) {
+                MySQLCourseDao mySQLCourseDao = new MySQLCourseDao();
+                List<Course> courses = mySQLCourseDao.getAllByInstructorId(id);
+                for (Course course : courses) mySQLCourseDao.delete(course.getId());
+            }
 
             deletePreparedStatement.executeUpdate();
         } catch (SQLException e) {

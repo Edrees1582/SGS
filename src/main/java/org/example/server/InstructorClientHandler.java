@@ -65,7 +65,7 @@ public class InstructorClientHandler {
                 case 6:
                     String updateCourseId = dataInputStream.readUTF();
                     String updateStudentId = dataInputStream.readUTF();
-                    dataOutputStream.writeUTF(String.valueOf(mySQLGradeDao.get(updateCourseId, updateStudentId)));
+                    dataOutputStream.writeDouble(mySQLGradeDao.get(updateCourseId, updateStudentId).getGrade());
                     dataOutputStream.flush();
                     mySQLGradeDao.update(dataInputStream, updateCourseId, updateStudentId);
                     dataOutputStream.writeUTF("Grade updated successfully");

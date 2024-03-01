@@ -88,8 +88,11 @@ public class MySQLEnrollmentDao implements EnrollmentDao {
 
             PreparedStatement preparedStatement = connection.prepareCall(saveSql);
 
-            preparedStatement.setString(1, dataInputStream.readUTF());
-            preparedStatement.setString(2, dataInputStream.readUTF());
+            String courseId = dataInputStream.readUTF();
+            String studentId = dataInputStream.readUTF();
+
+            preparedStatement.setString(1, courseId);
+            preparedStatement.setString(2, studentId);
 
             preparedStatement.executeUpdate();
         } catch (SQLException | IOException e) {
@@ -108,6 +111,45 @@ public class MySQLEnrollmentDao implements EnrollmentDao {
             deletePreparedStatement.setString(2, studentId);
 
             deletePreparedStatement.executeUpdate();
+
+            MySQLGradeDao mySQLGradeDao = new MySQLGradeDao();
+            mySQLGradeDao.delete(courseId, studentId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteByStudent(String studentId) {
+        try (Connection connection = dbUtil.getDataSource().getConnection()) {
+            String deleteSql = "delete from enrollment where studentId = ?;";
+
+            PreparedStatement deletePreparedStatement = connection.prepareCall(deleteSql);
+
+            deletePreparedStatement.setString(1, studentId);
+
+            deletePreparedStatement.executeUpdate();
+
+            MySQLGradeDao mySQLGradeDao = new MySQLGradeDao();
+            mySQLGradeDao.deleteByStudent(studentId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteByCourse(String courseId) {
+        try (Connection connection = dbUtil.getDataSource().getConnection()) {
+            String deleteSql = "delete from enrollment where courseId = ?;";
+
+            PreparedStatement deletePreparedStatement = connection.prepareCall(deleteSql);
+
+            deletePreparedStatement.setString(1, courseId);
+
+            deletePreparedStatement.executeUpdate();
+
+            MySQLGradeDao mySQLGradeDao = new MySQLGradeDao();
+            mySQLGradeDao.deleteByCourse(courseId);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

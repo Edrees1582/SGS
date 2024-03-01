@@ -12,4 +12,6 @@ public interface GradeDao {
     void save(DataInputStream dataInputStream);
     void update(DataInputStream dataInputStream, String courseId, String studentId);
     void delete(String courseId, String studentId);
+    void deleteByStudent(String studentId);
+    void deleteByCourse(String courseId);
 }

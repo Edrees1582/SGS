@@ -57,15 +57,15 @@ public class FormatData {
 
     public String formatGrades(List<Grade> grades) {
         StringBuilder result = new StringBuilder();
-        result.append("+------------+------------+-------+\n");
-        result.append(String.format("| %-10s | %-10s | %-5s |\n", "Course ID", "Student ID", "Grade"));
-        result.append("+------------+------------+-------+\n");
+        result.append("+------------+------------+-----------+\n");
+        result.append(String.format("| %-10s | %-10s | %-9s |\n", "Course ID", "Student ID", "Grade"));
+        result.append("+------------+------------+-----------+\n");
 
         for (Grade grade : grades) {
-            result.append(String.format("| %-10s | %-10s | %-5d |\n", grade.getCourseId(), grade.getStudentId(), grade.getGrade()));
+            result.append(String.format("| %-10s | %-10s | %-5f |\n", grade.getCourseId(), grade.getStudentId(), grade.getGrade()));
         }
 
-        result.append("+------------+------------+-------+\n");
+        result.append("+------------+------------+-----------+\n");
 
         return String.valueOf(result);
     }

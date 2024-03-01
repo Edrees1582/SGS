@@ -20,7 +20,7 @@ public class DBUtil {
         mysqlDataSource.setServerName("localhost");
         mysqlDataSource.setDatabaseName("sgs");
         mysqlDataSource.setUser("root");
-        mysqlDataSource.setPassword("");
+        mysqlDataSource.setPassword("Atypon#123");
         mysqlDataSource.setUseSSL(false);
         mysqlDataSource.setAllowPublicKeyRetrieval(true);
 

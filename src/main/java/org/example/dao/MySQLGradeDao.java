@@ -112,4 +112,34 @@ public class MySQLGradeDao implements GradeDao {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void deleteByStudent(String studentId) {
+        try (Connection connection = dbUtil.getDataSource().getConnection()) {
+            String deleteSql = "delete from grades where studentId = ?;";
+
+            PreparedStatement deletePreparedStatement = connection.prepareCall(deleteSql);
+
+            deletePreparedStatement.setString(1, studentId);
+
+            deletePreparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteByCourse(String courseId) {
+        try (Connection connection = dbUtil.getDataSource().getConnection()) {
+            String deleteSql = "delete from grades where courseId = ?;";
+
+            PreparedStatement deletePreparedStatement = connection.prepareCall(deleteSql);
+
+            deletePreparedStatement.setString(1, courseId);
+
+            deletePreparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

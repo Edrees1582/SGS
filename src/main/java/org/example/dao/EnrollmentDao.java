@@ -13,4 +13,6 @@ public interface EnrollmentDao {
     List<Enrollment> getAll();
     void save(DataInputStream dataInputStream);
     void delete(String courseId, String studentId);
+    void deleteByStudent(String studentId);
+    void deleteByCourse(String courseId);
 }
