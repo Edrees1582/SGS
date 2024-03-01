@@ -18,14 +18,12 @@ public class ClientHandler implements Runnable {
             DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
 
-            int chosenUserType = dataInputStream.readInt();
-
             String userId = dataInputStream.readUTF();
             String userPassword = dataInputStream.readUTF();
 
             Authentication authentication = new Authentication();
 
-            User user = authentication.authenticateUser(chosenUserType, userId, userPassword);
+            User user = authentication.authenticateUser(userId, userPassword);
 
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 
@@ -34,31 +32,30 @@ public class ClientHandler implements Runnable {
                 System.out.println(user.getUserType() + ": " + user.getName() + " logged in");
                 objectOutputStream.writeObject(user);
                 dataOutputStream.flush();
+
+                switch (user.getUserType()) {
+                    case ADMIN:
+                        AdminClientHandler adminClientHandler = new AdminClientHandler(clientSocket);
+                        adminClientHandler.runHandler();
+                        break;
+                    case INSTRUCTOR:
+                        InstructorClientHandler instructorClientHandler = new InstructorClientHandler(clientSocket);
+                        instructorClientHandler.runHandler();
+                        break;
+                    case STUDENT:
+                        StudentClientHandler studentClientHandler = new StudentClientHandler(clientSocket);
+                        studentClientHandler.runHandler();
+                        break;
+                    default:
+                        System.out.println("Invalid user type");
+                }
+
+                clientSocket.close();
             }
             else {
                 dataOutputStream.writeBoolean(false);
                 clientSocket.close();
-                return;
             }
-
-            switch (chosenUserType) {
-                case 1:
-                    AdminClientHandler adminClientHandler = new AdminClientHandler(clientSocket);
-                    adminClientHandler.runHandler();
-                    break;
-                case 2:
-                    InstructorClientHandler instructorClientHandler = new InstructorClientHandler(clientSocket);
-                    instructorClientHandler.runHandler();
-                    break;
-                case 3:
-                    StudentClientHandler studentClientHandler = new StudentClientHandler(clientSocket);
-                    studentClientHandler.runHandler();
-                    break;
-                default:
-                    System.out.println("Invalid user type");
-            }
-
-            clientSocket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

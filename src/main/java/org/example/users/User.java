@@ -41,8 +41,8 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "+------------+----------------------+\n" +
-                String.format("| %-10s | %-20s |\n", "ID", "Name") +
-                "+------------+----------------------+\n";
+        return "+------------+----------------------+------------+\n" +
+                String.format("| %-10s | %-20s | %-10s |\n", "ID", "Name", "User type") +
+                "+------------+----------------------+------------+\n";
     }
 }

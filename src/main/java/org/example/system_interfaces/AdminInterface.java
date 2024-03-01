@@ -44,18 +44,13 @@ public class AdminInterface implements UserInterface, Serializable {
                         dataOutputStream.writeUTF(scanner.next());
                         break;
                     case 2:
-                        System.out.print("Enter user type: ");
-                        dataOutputStream.writeInt(scanner.nextInt());
                         System.out.print("Enter user id: ");
                         dataOutputStream.writeUTF(scanner.next());
                         break;
                     case 3:
-                        System.out.print("Enter user type: ");
-                        dataOutputStream.writeInt(scanner.nextInt());
+                        System.out.println("Users:");
                         break;
                     case 4:
-                        System.out.print("Enter user type: ");
-                        dataOutputStream.writeInt(scanner.nextInt());
                         System.out.print("Enter user id: ");
                         dataOutputStream.writeUTF(scanner.next());
 
@@ -94,8 +89,6 @@ public class AdminInterface implements UserInterface, Serializable {
                         dataOutputStream.flush();
                         break;
                     case 5:
-                        System.out.print("Enter user type: ");
-                        dataOutputStream.writeInt(scanner.nextInt());
                         System.out.print("Enter user id: ");
                         dataOutputStream.writeUTF(scanner.next());
                         break;

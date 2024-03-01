@@ -4,6 +4,7 @@ import org.example.models.Course;
 import org.example.system_interfaces.AdminInterface;
 import org.example.system_interfaces.InstructorInterface;
 import org.example.system_interfaces.StudentInterface;
+import org.example.system_interfaces.UserInterface;
 import org.example.users.*;
 import org.example.util.DBUtil;
 
@@ -25,22 +26,27 @@ public class MySQLUserDao implements UserDao<User> {
     }
 
     @Override
-    public User get(String id, UserType userType) {
+    public User get(String id) {
         try (Connection connection = dbUtil.getDataSource().getConnection()) {
             Statement statement = connection.createStatement();
-            ResultSet resultSet;
+            ResultSet resultSet = statement.executeQuery("select * from users where ID = '" + id + "';");
 
-            if (userType.equals(UserType.ADMIN)) {
-                resultSet = statement.executeQuery("select * from admins where ID = '" + id + "';");
-                if (resultSet.next()) return new User(id, resultSet.getString("password"), resultSet.getString("name"), userType, new AdminInterface());
-            }
-            else if (userType.equals(UserType.INSTRUCTOR)) {
-                resultSet = statement.executeQuery("select * from instructors where ID = '" + id + "';");
-                if (resultSet.next()) return new User(id, resultSet.getString("password"), resultSet.getString("name"), userType, new InstructorInterface());
-            }
-            else if (userType.equals(UserType.STUDENT)) {
-                resultSet = statement.executeQuery("select * from students where ID = '" + id + "';");
-                if (resultSet.next()) return new User(id, resultSet.getString("password"), resultSet.getString("name"), userType, new StudentInterface());
+            if (resultSet.next()) {
+                UserType userType = switch (resultSet.getString("userType")) {
+                    case "admin" -> UserType.ADMIN;
+                    case "instructor" -> UserType.INSTRUCTOR;
+                    case "student" -> UserType.STUDENT;
+                    default -> throw new IllegalStateException("Unexpected value: " + resultSet.getString("userType"));
+                };
+
+                UserInterface userInterface = switch (resultSet.getString("userType")) {
+                    case "admin" -> new AdminInterface();
+                    case "instructor" -> new InstructorInterface();
+                    case "student" -> new StudentInterface();
+                    default -> throw new IllegalStateException("Unexpected value: " + resultSet.getString("userType"));
+                };
+
+                return new User(id, resultSet.getString("password"), resultSet.getString("name"), userType, userInterface);
             }
 
             return null;
@@ -50,26 +56,28 @@ public class MySQLUserDao implements UserDao<User> {
     }
 
     @Override
-    public List<User> getAll(UserType userType) {
+    public List<User> getAll() {
         try (Connection connection = dbUtil.getDataSource().getConnection()) {
             Statement statement = connection.createStatement();
-            ResultSet resultSet;
+            ResultSet resultSet = statement.executeQuery("select * from users;");
             List<User> users = new ArrayList<>();
 
-            if (userType.equals(UserType.ADMIN)) {
-                resultSet = statement.executeQuery("select * from admins;");
-                while (resultSet.next())
-                    users.add(new User(resultSet.getString("id"), resultSet.getString("password"), resultSet.getString("name"), userType, new AdminInterface()));
-            }
-            else if (userType.equals(UserType.INSTRUCTOR)) {
-                resultSet = statement.executeQuery("select * from instructors;");
-                while (resultSet.next())
-                    users.add(new User(resultSet.getString("id"), resultSet.getString("password"), resultSet.getString("name"), userType, new InstructorInterface()));
-            }
-            else if (userType.equals(UserType.STUDENT)) {
-                resultSet = statement.executeQuery("select * from students;");
-                while (resultSet.next())
-                    users.add(new User(resultSet.getString("id"), resultSet.getString("password"), resultSet.getString("name"), userType, new StudentInterface()));
+            while (resultSet.next()) {
+                UserType userType = switch (resultSet.getString("userType")) {
+                    case "admin" -> UserType.ADMIN;
+                    case "instructor" -> UserType.INSTRUCTOR;
+                    case "student" -> UserType.STUDENT;
+                    default -> throw new IllegalStateException("Unexpected value: " + resultSet.getString("userType"));
+                };
+
+                UserInterface userInterface = switch (resultSet.getString("userType")) {
+                    case "admin" -> new AdminInterface();
+                    case "instructor" -> new InstructorInterface();
+                    case "student" -> new StudentInterface();
+                    default -> throw new IllegalStateException("Unexpected value: " + resultSet.getString("userType"));
+                };
+
+                users.add(new User(resultSet.getString("id"), resultSet.getString("password"), resultSet.getString("name"), userType, userInterface));
             }
 
             return users;
@@ -79,12 +87,44 @@ public class MySQLUserDao implements UserDao<User> {
     }
 
     @Override
+    public List<User> getStudents() {
+        try (Connection connection = dbUtil.getDataSource().getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from users where userType = 'student';");
+            List<User> students = new ArrayList<>();
+
+            while (resultSet.next())
+                students.add(new User(resultSet.getString("id"), resultSet.getString("password"), resultSet.getString("name"), UserType.STUDENT, new StudentInterface()));
+
+            return students;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<User> getInstructors() {
+        try (Connection connection = dbUtil.getDataSource().getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from users where userType = 'instructor';");
+            List<User> instructors = new ArrayList<>();
+
+            while (resultSet.next())
+                instructors.add(new User(resultSet.getString("id"), resultSet.getString("password"), resultSet.getString("name"), UserType.INSTRUCTOR, new InstructorInterface()));
+
+            return instructors;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void save(DataInputStream dataInputStream, DataOutputStream dataOutputStream, UserType userType) {
         try (Connection connection = dbUtil.getDataSource().getConnection()) {
             String saveSql = switch (userType) {
-                case ADMIN -> "insert into admins values (?, ?, ?);";
-                case INSTRUCTOR -> "insert into instructors values (?, ?, ?);";
-                case STUDENT -> "insert into students values (?, ?, ?);";
+                case ADMIN -> "insert into users values (?, ?, ?, 'admin');";
+                case INSTRUCTOR -> "insert into users values (?, ?, ?, 'instructor');";
+                case STUDENT -> "insert into users values (?, ?, ?, 'student');";
             };
 
             PreparedStatement preparedStatement = connection.prepareCall(saveSql);
@@ -99,7 +139,7 @@ public class MySQLUserDao implements UserDao<User> {
     }
 
     @Override
-    public void update(DataInputStream dataInputStream, DataOutputStream dataOutputStream, String id, UserType userType, int updateOption) {
+    public void update(DataInputStream dataInputStream, DataOutputStream dataOutputStream, String id, int updateOption) {
         try (Connection connection = dbUtil.getDataSource().getConnection()) {
             String setQuery = switch (updateOption) {
                 case 1 -> "id = ?";
@@ -108,11 +148,7 @@ public class MySQLUserDao implements UserDao<User> {
                 default -> null;
             };
 
-            String updateSql = switch (userType) {
-                case ADMIN -> "update admins set " + setQuery + " where id = ?;";
-                case INSTRUCTOR -> "update instructors set " + setQuery + " where id = ?;";
-                case STUDENT -> "update students set " + setQuery + " where id = ?;";
-            };
+            String updateSql = "update users set " + setQuery + " where id = ?;";
 
             PreparedStatement updatePreparedStatement = connection.prepareCall(updateSql);
             updatePreparedStatement.setString(1, dataInputStream.readUTF());
@@ -125,23 +161,20 @@ public class MySQLUserDao implements UserDao<User> {
     }
 
     @Override
-    public void delete(String id, UserType userType) {
+    public void delete(String id) {
         try (Connection connection = dbUtil.getDataSource().getConnection()) {
-            String deleteSql = switch (userType) {
-                case ADMIN -> "delete from admins where id = ?;";
-                case INSTRUCTOR -> "delete from instructors where id = ?;";
-                case STUDENT -> "delete from students where id = ?;";
-            };
-            
+            String deleteSql = "delete from users where id = ?;";
+            User user = get(id);
+
             PreparedStatement deletePreparedStatement = connection.prepareCall(deleteSql);
             deletePreparedStatement.setString(1, id);
 
-            if (userType == UserType.STUDENT) {
+            if (user.getUserType() == UserType.STUDENT) {
                 MySQLEnrollmentDao mySQLEnrollmentDao = new MySQLEnrollmentDao();
                 List<Course> courses = mySQLEnrollmentDao.getStudentCourses(id);
                 for (Course course : courses) mySQLEnrollmentDao.delete(course.getId(), id);
             }
-            else if (userType == UserType.INSTRUCTOR) {
+            else if (user.getUserType() == UserType.INSTRUCTOR) {
                 MySQLCourseDao mySQLCourseDao = new MySQLCourseDao();
                 List<Course> courses = mySQLCourseDao.getAllByInstructorId(id);
                 for (Course course : courses) mySQLCourseDao.delete(course.getId());

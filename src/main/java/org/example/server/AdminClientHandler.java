@@ -44,30 +44,26 @@ public class AdminClientHandler {
                     dataOutputStream.writeUTF("A new user is added successfully");
                     break;
                 case 2:
-                    UserType userType = choseUserType(dataInputStream.readInt());
                     String getUserId = dataInputStream.readUTF();
-                    User fetchedUser = mySQLUserDao.get(getUserId, userType);
+                    User fetchedUser = mySQLUserDao.get(getUserId);
                     dataOutputStream.writeUTF(String.valueOf(fetchedUser));
                     break;
                 case 3:
-                    UserType usersType = choseUserType(dataInputStream.readInt());
-                    List<User> fetchedUsers = mySQLUserDao.getAll(usersType);
+                    List<User> fetchedUsers = mySQLUserDao.getAll();
                     dataOutputStream.writeUTF(formatData.formatUsers(fetchedUsers));
                     break;
                 case 4:
-                    UserType updateUserType = choseUserType(dataInputStream.readInt());
                     String updateUserId = dataInputStream.readUTF();
-                    dataOutputStream.writeUTF(String.valueOf(mySQLUserDao.get(updateUserId, updateUserType)));
+                    dataOutputStream.writeUTF(String.valueOf(mySQLUserDao.get(updateUserId)));
                     dataOutputStream.flush();
                     int updateUserOption = dataInputStream.readInt();
-                    mySQLUserDao.update(dataInputStream, dataOutputStream, updateUserId, updateUserType, updateUserOption);
+                    mySQLUserDao.update(dataInputStream, dataOutputStream, updateUserId, updateUserOption);
                     dataOutputStream.writeUTF("User updated successfully");
                     break;
                 case 5:
-                    UserType deleteUserType = choseUserType(dataInputStream.readInt());
                     String deleteUserId = dataInputStream.readUTF();
-                    mySQLUserDao.delete(deleteUserId, deleteUserType);
-                    dataOutputStream.writeUTF(deleteUserType + " with id: " + deleteUserId + ", is deleted");
+                    mySQLUserDao.delete(deleteUserId);
+                    dataOutputStream.writeUTF( "User with id: " + deleteUserId + ", is deleted");
                     break;
                 case 6:
                     mySQLCourseDao.save(dataInputStream, dataOutputStream);

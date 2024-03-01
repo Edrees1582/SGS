@@ -17,23 +17,21 @@ public class Authentication {
         dbUtil = new DBUtil();
     }
 
-    public User authenticateUser(int chosenUserType, String id, String password) {
+    public User authenticateUser(String id, String password) {
         try (Connection connection = dbUtil.getDataSource().getConnection()) {
             Statement statement = connection.createStatement();
             ResultSet resultSet;
             User user = null;
 
-            if (chosenUserType == 1) {
-                resultSet = statement.executeQuery("select * from admins where ID = '" + id + "' AND password = '" + password + "';");
-                if (resultSet.next()) user = new User(id, password, resultSet.getString("name"), UserType.ADMIN, new AdminInterface());
-            }
-            else if (chosenUserType == 2) {
-                resultSet = statement.executeQuery("select * from instructors where ID = '" + id + "' AND password = '" + password + "';");
-                if (resultSet.next()) user = new User(id, password, resultSet.getString("name"), UserType.INSTRUCTOR, new InstructorInterface());
-            }
-            else if (chosenUserType == 3) {
-                resultSet = statement.executeQuery("select * from students where ID = '" + id + "' AND password = '" + password + "';");
-                if (resultSet.next()) user = new User(id, password, resultSet.getString("name"), UserType.STUDENT, new StudentInterface());
+            resultSet = statement.executeQuery("select * from users where ID = '" + id + "' AND password = '" + password + "';");
+
+            if (resultSet.next()) {
+                if (resultSet.getString("userType").equals("admin"))
+                    user = new User(id, password, resultSet.getString("name"), UserType.ADMIN, new AdminInterface());
+                else if (resultSet.getString("userType").equals("instructor"))
+                    user = new User(id, password, resultSet.getString("name"), UserType.INSTRUCTOR, new InstructorInterface());
+                else if (resultSet.getString("userType").equals("student"))
+                    user = new User(id, password, resultSet.getString("name"), UserType.STUDENT, new StudentInterface());
             }
 
             return user;

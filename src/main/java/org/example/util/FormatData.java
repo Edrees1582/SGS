@@ -12,15 +12,15 @@ import java.util.List;
 public class FormatData {
     public String formatUsers(List<User> fetchedUsers) {
         StringBuilder result = new StringBuilder();
-        result.append("+------------+----------------------+\n");
-        result.append(String.format("| %-10s | %-20s |\n", "User ID", "Name"));
-        result.append("+------------+----------------------+\n");
+        result.append("+------------+----------------------+------------+\n");
+        result.append(String.format("| %-10s | %-20s | %-10s |\n", "User ID", "Name", "User type"));
+        result.append("+------------+----------------------+------------+\n");
 
         for (User user : fetchedUsers) {
-            result.append(String.format("| %-10s | %-20s |\n", user.getId(), user.getName()));
+            result.append(String.format("| %-10s | %-20s | %-10s |\n", user.getId(), user.getName(), user.getUserType()));
         }
 
-        result.append("+------------+----------------------+\n");
+        result.append("+------------+----------------------+------------+\n");
 
         return String.valueOf(result);
     }

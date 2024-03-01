@@ -18,12 +18,6 @@ public class Client {
 
             Scanner scanner = new Scanner(System.in);
 
-            System.out.println("1. Admin");
-            System.out.println("2. Instructor");
-            System.out.println("3. Student");
-            System.out.print("Choose user type: ");
-            dataOutputStream.writeInt(scanner.nextInt());
-
             System.out.print("Enter id: ");
             dataOutputStream.writeUTF(scanner.next());
             System.out.print("Enter password: ");

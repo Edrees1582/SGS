@@ -30,7 +30,7 @@ public class MySQLEnrollmentDao implements EnrollmentDao {
                     "from\n" +
                     "\tcourses c\n" +
                     "inner join enrollment e on e.courseId = c.id\n" +
-                    "inner join students s on s.id = e.studentId\n" +
+                    "inner join users s on s.id = e.studentId\n" +
                     "where s.id = '" + studentId + "';");
             List<Course> courses = new ArrayList<>();
 
@@ -50,7 +50,7 @@ public class MySQLEnrollmentDao implements EnrollmentDao {
             ResultSet resultSet = statement.executeQuery("select\n" +
                     "\ts.*\n" +
                     "from\n" +
-                    "\tstudents s\n" +
+                    "\tusers s\n" +
                     "inner join enrollment e on e.studentId = s.id\n" +
                     "inner join courses c on c.id = e.courseId\n" +
                     "where c.id = '" + courseId + "';");

@@ -18,7 +18,7 @@ public class DBUtil {
     private DataSource initializeDataSource() throws SQLException {
         MysqlDataSource mysqlDataSource =  new MysqlDataSource();
         mysqlDataSource.setServerName("localhost");
-        mysqlDataSource.setDatabaseName("sgs");
+        mysqlDataSource.setDatabaseName("sgs2");
         mysqlDataSource.setUser("root");
         mysqlDataSource.setPassword("Atypon#123");
         mysqlDataSource.setUseSSL(false);
